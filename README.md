@@ -41,3 +41,5 @@ While the TTOTM stuff requires access to the TTOTM Google Sheet, anyone can run 
         
 3. Then, run with 
         $ python runNonTTOTM.py
+
+Enjoy!
