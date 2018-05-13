@@ -31,7 +31,7 @@ While the TTOTM stuff requires access to the TTOTM Google Sheet, anyone can run 
               }
 
 2. You might need to install several packages that are used in the program:
-  -Python 2
+  -Python 3
   -SQLAlchemy, since everything is stored in SQL using SQL Alchmey Object Relational Mapping 
         $ pip install SQLAlchemy
   -Beautiful Soup 4 (bs4), which helps parse HTML
