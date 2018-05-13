@@ -1,6 +1,8 @@
 # music
 A program for findings concerts based on bands favored by the music sharing group, TTOTM
 
+*** updated 5/13/2018, converted to Python 3
+
 There are three main files that run the whole project: 
   1. runTTOTM.py, which collects TTOTM bands, finds the shows, and emails TTOTM members by city.
   2. runNonTTOTM.py, which collects bands from a couple different sources like radio DJs and music review sites, and also finds shows and emails a couple people who wanted to be on that list.
