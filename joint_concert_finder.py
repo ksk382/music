@@ -90,7 +90,10 @@ def grabBIT(bands, places):
     print(('Done fetching Bandsintown data. {0} shows grabbed.'.format(len(shows))))
     print(('Failed to find {0} bands:'.format(len(bandfails))))
     for h in bandfails:
-        print (h)
+        try:
+            print (h)
+        except:
+            print ('unprintable band')
     return shows
 
 def grabTFLY(bands, home):
