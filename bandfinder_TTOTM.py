@@ -2,6 +2,7 @@
 from joint_build_database import band
 from gsheetpull import sheetpull
 from joint_music_utilities import cleanup
+from joint_get_bands import get_TTOTM_bands
 import datetime as dt
 
 def getthebands(Session):

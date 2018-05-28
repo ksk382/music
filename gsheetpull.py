@@ -22,7 +22,6 @@ if foundpath:
         if 'client_secret_' in i:
             CLIENT_SECRET_FILE = client_secret_pathname + i
             foundfile = True
-print (foundfile)
 if not foundfile:
     CLIENT_SECRET_FILE = 'client_secret_12345'
 
@@ -40,17 +39,16 @@ def get_credentials():
     """
     home_dir = os.path.expanduser('~')
     credential_dir = os.path.join(home_dir, '.credentials')
-    print (credential_dir)
-    print (os.path.exists(credential_dir))
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
                                    'sheets.googleapis.com-python-quickstart.json')
     print ('Credential path exists: ', os.path.exists(credential_path))
+    if not os.path.exists(credential_path):
+        os.makedirs(credential_path)
 
     store = Storage(credential_path)
     credentials = store.get()
-    print (credentials)
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
