@@ -31,14 +31,19 @@ While the TTOTM stuff requires access to the TTOTM Google Sheet, anyone can run 
               }
 
 2. You might need to install several packages that are used in the program:
-  -Python 3
-  -SQLAlchemy, since everything is stored in SQL using SQL Alchmey Object Relational Mapping 
+
+-Python 3
+
+-SQLAlchemy, since everything is stored in SQL using SQL Alchmey Object Relational Mapping 
         $ pip install SQLAlchemy
-  -Beautiful Soup 4 (bs4), which helps parse HTML
+
+-Beautiful Soup 4 (bs4), which helps parse HTML
         $ pip install beautifulsoup4
-  -oathtools, which is part of google's api python client library
+
+-oathtools, which is part of google's api python client library
         $ pip install --upgrade google-api-python-client 
-  -geopy, which enables measurement of geographic distances
+        
+-geopy, which enables measurement of geographic distances
         $ pip install geopy
         
 3. Then, run with 
