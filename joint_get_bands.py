@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from gsheetpull import sheetpull
 import urllib.request, urllib.parse, urllib.error, json, getopt
 import datetime as dt
