@@ -8,7 +8,7 @@ import datetime as dt
 def getthebands(Session):
     session = Session()
     session.query(band).delete()
-    bandlist = sheetpull()
+    bandlist = get_TTOTM_bands()
     today = dt.date.today()
     errs = []
     for item in bandlist:
