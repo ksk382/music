@@ -22,7 +22,7 @@ if foundpath:
         if 'client_secret_' in i:
             CLIENT_SECRET_FILE = client_secret_pathname + i
             foundfile = True
-
+print (foundfile)
 if not foundfile:
     CLIENT_SECRET_FILE = 'client_secret_12345'
 
@@ -40,6 +40,8 @@ def get_credentials():
     """
     home_dir = os.path.expanduser('~')
     credential_dir = os.path.join(home_dir, '.credentials')
+    print (credential_dir)
+    print (os.path.exists(credential_dir))
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
@@ -47,6 +49,7 @@ def get_credentials():
 
     store = Storage(credential_path)
     credentials = store.get()
+    print (credentials)
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
@@ -59,6 +62,7 @@ def get_credentials():
 
 def sheetpull():
     credentials = get_credentials()
+    print ('Credential get: ', credentials)
     http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
                     'version=v4')
@@ -119,3 +123,7 @@ def sheetquery(month_name, path):
         if month_name in i:
             return True
     return False
+
+if __name__ == "__main__":
+    get_credentials()
+    sheetpull()
