@@ -15,7 +15,7 @@ def gettheshows(Session):
             try:
                 print(("Adding {0} at {1} on {2} (from {3})".format(i.name, i.venue, i.date, 'Bandsintown')))
             except:
-                print ('Added unprintable show')
+                print ('Added unprintable show from Bandsintown')
             i.dateadded = t
             session.add(i)
             session.commit()
@@ -28,7 +28,7 @@ def gettheshows(Session):
                 try:
                     print(("Adding {0} at {1} on {2} (from {3})".format(i.name, i.venue, i.date, 'Ticketfly')))
                 except:
-                    print ('Added unprintable show')
+                    print ('Added unprintable show from Ticketfly')
                 i.dateadded = t
                 session.add(i)
                 session.commit()
