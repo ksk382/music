@@ -107,8 +107,16 @@ def grabTFLY(bands, home):
     adddates = '&fromDate=' + str(tday) + '&&thruDate=' + str(b)
     addfilters = '&fields=venue.city,startDate,venue.name,headlinersName,supportsName'
     url = baseURL + addlocation + adddates + addfilters
-    resp = requests.get(url)
-    data = resp.json()
+    print ('\n', url, '\n')
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+    resp = requests.get(url, headers=headers)
+    try:
+        data = resp.json()
+    except:
+        print ('json failed...\n\n\n')
+        print(resp)
+        return []
     i=1
     cleanbands = []
     for band in bands:
@@ -116,8 +124,13 @@ def grabTFLY(bands, home):
     while (i <= data['totalPages']):
         newpage = '&pageNum=' + str(i)
         urlpg = url + newpage
-        resp = requests.get(urlpg)
-        data = resp.json()
+        print (urlpg)
+        resp = requests.get(urlpg, headers=headers)
+        try:
+            data = resp.json()
+        except:
+            print ('json failed...\n\n\n')
+            print(resp)
         print(('Page {0} of {1}'.format(data['pageNum'], data['totalPages'])))
         barmax = len(data['events'])
         count = 0
