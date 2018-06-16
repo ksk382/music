@@ -36,7 +36,7 @@ def getthebands(Session):
     return
 
 def grabbands(src):
-    maxbands = 50
+    maxbands = 75
     if src == 'Pitchfork':
         list = Pitchfork_charts(maxbands)
     if src == 'KEXP charts':
@@ -44,7 +44,6 @@ def grabbands(src):
     if src == 'KCRW':
         list = KCRW_harvest(maxbands)
     if src == 'KEXP playlists':
-        maxbands = 50
         list = KEXP_harvest(maxbands)
     return list
 
