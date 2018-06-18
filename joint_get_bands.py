@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from gsheetpull import sheetpull
-import urllib.request, urllib.parse, urllib.error, json, getopt
-import datetime as dt
 import urllib
+import datetime as dt
 from bs4 import BeautifulSoup
 from joint_build_database import band
 from pytz import timezone
