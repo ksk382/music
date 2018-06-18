@@ -2,7 +2,7 @@
 from gsheetpull import sheetpull
 import urllib.request, urllib.parse, urllib.error, json, getopt
 import datetime as dt
-import urllib.request, urllib.error, urllib.parse
+import urllib
 from bs4 import BeautifulSoup
 from joint_build_database import band
 from pytz import timezone
