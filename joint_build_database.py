@@ -40,6 +40,7 @@ class band(db):
     id = Column(Integer, primary_key=True)
     name = Column(String(64), index=True)
     song = Column(String(64))
+    album = Column(String(64))
     appeared = Column(String(64), index=True)
     cleanname = Column(String(64), index=True)
     source = Column(String(64), index=True)

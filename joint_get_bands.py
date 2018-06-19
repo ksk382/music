@@ -28,9 +28,11 @@ def Pitchfork_charts(maxbands):
             a = soup.findAll("ul", {"class": "artist-list"})
             print(("Page {0} retrieved".format(i)))
             for banddiv in a:
-                newband = band(name=banddiv.text, appeared='Pitchfork 8.0+ reviews')
+                album = banddiv.findNext("h2").text
+                newband = band(name=banddiv.text, appeared='Pitchfork 8.0+ reviews', album = album)
                 allbands.append(newband)
-        except:
+        except Exception as e:
+            print (str(e))
             print(("Page {0} failed".format(i)))
             continue
 
@@ -65,7 +67,8 @@ def metacritic(maxbands):
     b = a.find_all('div', {'class': 'product_row release'})
     for i in b:
         artist = i.find('div', {'class': 'product_item product_artist'}).text.strip()
-        newband = band(name=artist, appeared='Metacritic')
+        album = i.find('div', {'class': 'product_item product_title'}).text.strip()
+        newband = band(name=artist, appeared='Metacritic', album = album)
         allbands.append(newband)
 
     browser.quit()
@@ -106,12 +109,16 @@ def KEXP_charts(maxbands):
             d = e.split('-')
             if len(d) == 2:
                 artist = d[0]
+                parens = d[1].find('(')
+                album = d[1][:parens]
             d = e.split('–')
             if len(d) == 2:
-                artist = d[0]
+                artist = d[0].strip()
+                parens = d[1].find('(')
+                album = d[1][:parens].strip()
 
-            print (artist)
-            newband = band(name=artist, appeared = genre)
+            print (artist, album)
+            newband = band(name=artist, appeared = genre, album = album)
             allbands.append(newband)
 
     c = []
