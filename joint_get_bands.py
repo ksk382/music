@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from gsheetpull import sheetpull
-import urllib, json, getopt
+import urllib.request, json, getopt
 import datetime as dt
 from bs4 import BeautifulSoup
 from joint_build_database import band
