@@ -4,7 +4,7 @@ from joint_music_utilities import cleandb, cleanup, shredTTOTMs
 from joint_build_database import band
 
 maxbands = 200
-bandsources = ['Pitchfork', 'KEXP charts', 'Metacritic', 'KCRW', 'KEXP playlists']
+bandsources = ['KEXP playlists', 'Pitchfork', 'KEXP charts', 'Metacritic', 'KCRW']
 
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.

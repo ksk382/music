@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from joint_build_database import band
 from pytz import timezone
 from selenium import webdriver
+import socket
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
@@ -130,6 +131,8 @@ def KEXP_charts(maxbands):
 
 def KEXP_harvest(maxbands):
 
+    socket.setdefaulttimeout(5)
+
     shows = {
         'Swingin Doors': {'day': '3', 'time': '18:00', 'duration': 3},
         'Roadhouse': {'day': '2', 'time': '18:00', 'duration': 3},
@@ -187,7 +190,7 @@ def KEXP_harvest(maxbands):
                 response = urllib.request.urlopen(url)
                 data = json.loads(response.read())
                 dump = data['results']
-            except getopt.GetoptError as e:
+            except Exception as e:
                 print (str(e), '\n')
                 dump = []
 
@@ -224,9 +227,10 @@ def KEXP_harvest(maxbands):
     for j in allbands:
         if j not in c:
             c.append(j)
+
+    socket.setdefaulttimeout(15)
+
     return c
-
-
 
 
 def KCRW_harvest(maxbands):
