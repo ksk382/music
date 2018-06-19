@@ -51,9 +51,19 @@ def grabBIT(bands, places):
                 pass
             else:
                 for show in data:
+                    try:
+                        venueLL = '(' + show['venue']['latitude'] + ', ' + show['venue']['longitude'] + ')'
+                    except Exception as e:
+                        print(str(e))
+                        try:
+                            print(url)
+                            print((i.id))
+                        except:
+                            print('Unprintable: ', (i.id))
+                        continue
+
                     for home in places:
                         try:
-                            venueLL = '(' + show['venue']['latitude'] + ', ' + show['venue']['longitude'] + ')'
                             placeLL = '(' + str(home.lat) + ',' + str(home.long) + ')'
                             dist = vincenty(placeLL, venueLL).miles
                             if dist <= 20:
@@ -72,12 +82,12 @@ def grabBIT(bands, places):
                                         print ('Adding unprintable show')
                                     shows.append(a)
                         except Exception as e:
-                            print((str(e)))
+                            print(str(e))
                             try:
                                 print(url)
                                 print((i.id))
                             except:
-                                print('Unprintable, ', (i.id))
+                                print('Unprintable: ', (i.id))
             count +=1
             bar.update(count)
             #except Exception, e:

@@ -10,7 +10,7 @@ from joint_people_and_places import identify_people, identify_places
 from joint_notify import notify
 import sys
 
-socket.setdefaulttimeout(10)
+socket.setdefaulttimeout(15)
 # creation of the SQL database and the "session" object that is used to manage
 # communications with the database
 engine = create_engine('sqlite:///dbTTOTM.db')

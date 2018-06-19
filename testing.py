@@ -1,9 +1,40 @@
-import requests
+from joint_concert_finder import grabBIT, grabTFLY
+from joint_build_database import locales, band, gig
+import datetime as dt
+from sqlalchemy import create_engine
+from sqlalchemy import MetaData, Table
+from sqlalchemy.orm import sessionmaker, scoped_session
+from joint_build_database import db
 
-url = 'http://www.ticketfly.com/api/events/list.json?orgId=1&location=geo:41.8755546,-87.6244212&distance=20mi&fromDate=2018-06-10&&thruDate=2018-08-09&fields=venue.city,startDate,venue.name,headlinersName,supportsName&pageNum=1'
-print ('\n', url, '\n')
+def gettheshows(Session):
+    session = Session()
+    bandlist = session.query(band)
+    places = session.query(locales)
+    t = dt.date.today()
 
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-resp = requests.get(url, headers=headers)
-data = resp.json()
-print (data)
+    showlist = grabBIT(bandlist, places)
+    for i in showlist:
+        q = session.query(gig).filter(gig.date == i.date, gig.cleanname == i.cleanname)
+        if q.first() == None:
+            try:
+                print(("Adding {0} at {1} on {2} (from {3})".format(i.name, i.venue, i.date, 'Bandsintown')))
+            except:
+                print ('Added unprintable show from Bandsintown')
+            i.dateadded = t
+            session.add(i)
+            session.commit()
+
+
+    return
+
+if __name__ == "__main__":
+    # creation of the SQL database and the "session" object that is used to manage
+    # communications with the database
+    engine = create_engine('sqlite:///dbNonTTOTM.db')
+    session_factory = sessionmaker(bind=engine)
+    Session = scoped_session(session_factory)
+
+    metadata = MetaData(db)
+    db.metadata.create_all(engine)
+
+    gettheshows(Session)

@@ -13,7 +13,7 @@ import sys
 #from db_management import copy_quotes
 
 
-socket.setdefaulttimeout(10)
+socket.setdefaulttimeout(15)
 # creation of the SQL database and the "session" object that is used to manage
 # communications with the database
 engine = create_engine('sqlite:///dbNonTTOTM.db')
