@@ -39,13 +39,16 @@ def get_credentials():
     """
     home_dir = os.path.expanduser('~')
     credential_dir = os.path.join(home_dir, '.credentials')
+    print ('credential_dir: ', credential_dir)
     if not os.path.exists(credential_dir):
+        print ('making credential_dir')
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
                                    'sheets.googleapis.com-python-quickstart.json')
     print ('Credential path exists: ', os.path.exists(credential_path))
-    if not os.path.exists(credential_path):
-        os.makedirs(credential_path)
+    
+    #if not os.path.exists(credential_path):
+    #    os.makedirs(credential_path)
 
     store = Storage(credential_path)
     credentials = store.get()

@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker, scoped_session
 from joint_build_database import db
+from gsheetpull import sheetpull
 
 def gettheshows(Session):
     session = Session()
@@ -28,13 +29,6 @@ def gettheshows(Session):
     return
 
 if __name__ == "__main__":
-    # creation of the SQL database and the "session" object that is used to manage
-    # communications with the database
-    engine = create_engine('sqlite:///dbNonTTOTM.db')
-    session_factory = sessionmaker(bind=engine)
-    Session = scoped_session(session_factory)
-
-    metadata = MetaData(db)
-    db.metadata.create_all(engine)
-
-    gettheshows(Session)
+    v = sheetpull()
+    print (v)
+    print (len(v))
