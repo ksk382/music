@@ -6,12 +6,6 @@ import httplib2
 import os
 import json
 
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-    flags.noauth_local_webserver = True
-except ImportError:
-    flags = None
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/appsactivity-python-quickstart.json
