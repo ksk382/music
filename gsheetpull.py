@@ -27,6 +27,7 @@ if not foundfile:
 
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
+flags = None
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -46,7 +47,7 @@ def get_credentials():
     credential_path = os.path.join(credential_dir,
                                    'sheets.googleapis.com-python-quickstart.json')
     print ('Credential path exists: ', os.path.exists(credential_path))
-    
+
     #if not os.path.exists(credential_path):
     #    os.makedirs(credential_path)
 
@@ -55,11 +56,8 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run(flow, store)
         print(('Storing credentials to ' + credential_path))
+
     return credentials
 
 def sheetpull():
