@@ -4,9 +4,20 @@ from oauth2client import tools
 from oauth2client.file import Storage
 import httplib2
 import os
+import json
 
+try:
+    import argparse
+    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+except ImportError:
+    flags = None
 
+# If modifying these scopes, delete your previously saved credentials
+# at ~/.credentials/appsactivity-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
+APPLICATION_NAME = 'showtime3'
+
+
 cwd = os.getcwd()
 dirlist = os.listdir(cwd)
 foundpath = False
@@ -25,9 +36,19 @@ if foundpath:
 if not foundfile:
     CLIENT_SECRET_FILE = 'client_secret_12345'
 
-APPLICATION_NAME = 'Google Sheets API Python Quickstart'
+found_sheets = False
+for i in dirlist2:
+    if 'sheet' in i:
+        sheetid = i
+        found_sheets = True
 
-flags = None
+abssheetid = client_secret_pathname + sheetid
+with open(abssheetid) as s:
+    sheetnames = json.load(s)
+
+master_list_sheet = sheetnames['master_list_sheet']
+tester_list_sheet = sheetnames['tester_list_sheet']
+
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -38,27 +59,27 @@ def get_credentials():
     Returns:
         Credentials, the obtained credential.
     """
+
     home_dir = os.path.expanduser('~')
     credential_dir = os.path.join(home_dir, '.credentials')
-    print ('credential_dir: ', credential_dir)
     if not os.path.exists(credential_dir):
-        print ('making credential_dir')
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
-                                   'sheets.googleapis.com-python-quickstart.json')
-    print ('Credential path exists: ', os.path.exists(credential_path))
-
-    #if not os.path.exists(credential_path):
-    #    os.makedirs(credential_path)
+                                   'appsactivity-python-showtime.json')
 
     store = Storage(credential_path)
     credentials = store.get()
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        print(('Storing credentials to ' + credential_path))
-
+        print('Storing credentials to ' + credential_path)
+        if flags:
+            credentials = tools.run_flow(flow, store, flags)
+        else:  # Needed only for compatibility with Python 2.6
+            credentials = tools.run(flow, store)
+        print('Storing credentials to ' + credential_path)
     return credentials
+
 
 def sheetpull():
     credentials = get_credentials()
@@ -68,12 +89,13 @@ def sheetpull():
                     'version=v4')
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
-    spreadsheet_id = '1VF5G3eGW_X4EuDb3r_3_KWRc4vv7c_0w081wXqpEMQo'
+    spreadsheet_id = master_list_sheet
     rangeName = 'A2:C'
     result = service.spreadsheets().values().get \
         (spreadsheetId=spreadsheet_id, range=rangeName).execute()
     values = result.get('values', [])
     return (values)
+
 
 def sheetpush(tracks, path):
     credentials = get_credentials()
@@ -83,10 +105,10 @@ def sheetpush(tracks, path):
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
     if path == 'live':
-        spreadsheet_id = '1VF5G3eGW_X4EuDb3r_3_KWRc4vv7c_0w081wXqpEMQo'
+        spreadsheet_id = master_list_sheet
         sheetname = 'Master List'
     else:
-        spreadsheet_id = '1qAiAQuXlFWEIJUnUgODjdCPPikmrryil1elSYtPCHME'
+        spreadsheet_id = tester_list_sheet
         sheetname = 'Tester'
 
     range_name = 'Sheet1'
@@ -111,9 +133,9 @@ def sheetquery(month_name, path):
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
     if path == 'live':
-        spreadsheet_id = '1VF5G3eGW_X4EuDb3r_3_KWRc4vv7c_0w081wXqpEMQo'
+        spreadsheet_id = master_list_sheet
     else:
-        spreadsheet_id = '1qAiAQuXlFWEIJUnUgODjdCPPikmrryil1elSYtPCHME'
+        spreadsheet_id = tester_list_sheet
 
     rangeName = 'C2:C'
     result = list(service.spreadsheets().values()).get \
@@ -125,5 +147,7 @@ def sheetquery(month_name, path):
     return False
 
 if __name__ == "__main__":
+    print ('\n\n\n')
     get_credentials()
-    sheetpull()
+    a = sheetpull()
+    print (len(a))
