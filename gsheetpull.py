@@ -9,6 +9,7 @@ import json
 try:
     import argparse
     flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+    flags.noauth_local_webserver = True
 except ImportError:
     flags = None
 
