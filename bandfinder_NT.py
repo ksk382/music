@@ -1,10 +1,10 @@
-from joint_get_bands import Pitchfork_charts, KCRW_harvest, KEXP_charts, KEXP_harvest, metacritic
+from joint_get_bands import Pitchfork_charts, KCRW_harvest, KEXP_charts, KEXP_harvest, metacritic, sgum
 import datetime as dt
 from joint_music_utilities import cleandb, cleanup, shredTTOTMs
 from joint_build_database import band
 
 maxbands = 200
-bandsources = ['Metacritic', 'KCRW', 'KEXP playlists', 'Pitchfork', 'KEXP charts']
+bandsources = ['Stereogum', 'Metacritic', 'KCRW', 'KEXP playlists', 'Pitchfork', 'KEXP charts']
 
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.
@@ -49,8 +49,13 @@ def grabbands(src):
         try:
             list = metacritic(maxbands)
         except Exception as e:
+            list = []
             print (str(e))
             pass
+    if src == 'Stereogum':
+
+        list = sgum(maxbands)
+
     return list
 
 if __name__ == "__main__":

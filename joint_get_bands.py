@@ -5,8 +5,9 @@ import datetime as dt
 from bs4 import BeautifulSoup
 from joint_build_database import band
 from pytz import timezone
-from selenium import webdriver
 import socket
+from selenium import webdriver
+import re
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
@@ -46,23 +47,19 @@ def Pitchfork_charts(maxbands):
 
 def metacritic(maxbands):
 
-    url = 'http://www.metacritic.com/browse/albums/score/metascore/year/filtered'
     socket.setdefaulttimeout(15)
+    url = 'http://www.metacritic.com/browse/albums/score/metascore/year/filtered'
 
-    try:
-        browser = webdriver.Chrome()  # replace with .Firefox(), or with the browser of your choice
-    except:
-        try:
-            browser = webdriver.Firefox()  # replace with .Firefox(), or with the browser of your choice
-        except:
-            print ('Metacritic failed. Returning nothing')
-            return []
+    chromeOptions = webdriver.ChromeOptions()
+    prefs = {'profile.managed_default_content_settings.images': 2}
+    chromeOptions.add_experimental_option("prefs", prefs)
+    driver = webdriver.Chrome(chrome_options=chromeOptions)
+    driver.get(url)
 
-    browser.get(url)  # navigate to the page
-    innerHTML = browser.execute_script("return document.body.innerHTML")
-
+    innerHTML = driver.execute_script("return document.body.innerHTML")
     bs = BeautifulSoup(innerHTML, 'html.parser')
 
+    driver.quit()
     allbands = []
 
     a = bs.find('div', {'class': 'product_rows'})
@@ -73,7 +70,51 @@ def metacritic(maxbands):
         newband = band(name=artist, appeared='Metacritic', album = album)
         allbands.append(newband)
 
-    browser.quit()
+    c = []
+    for j in allbands:
+        if j not in c:
+            c.append(j)
+
+    return c[:maxbands]
+
+
+def sgum(maxbands):
+
+    socket.setdefaulttimeout(10)
+    allbands = []
+    url1 = 'https://www.stereogum.com/category/franchises/album-of-the-week/'
+
+    j = 1
+    while len(allbands) < maxbands:
+        print ('Getting Stereogum Album of the Week, page {0}'.format(j))
+        url = url1 + 'page/' + str(j) + '/'
+
+        chromeOptions = webdriver.ChromeOptions()
+        prefs = {'profile.managed_default_content_settings.images': 2}
+        chromeOptions.add_experimental_option("prefs", prefs)
+        driver = webdriver.Chrome(chrome_options=chromeOptions)
+        driver.get(url)
+
+        innerHTML = driver.execute_script("return document.body.innerHTML")
+        bs = BeautifulSoup(innerHTML, 'html.parser')
+
+        driver.quit()
+
+
+        a = bs.find_all('h2')
+        for i in a:
+            if 'Album Of The Week:' in i.text:
+                b = re.sub('Album Of The Week:', '', i.text)
+                c = i.find('em')
+                if c == None:
+                    c = i.find('i')
+                album = c.text.strip()
+                artist = re.sub(album, '', b).strip()
+                newband = band(name=artist, appeared='Stereogum', album=album)
+                allbands.append(newband)
+
+        j+=1
+        print ('Found {0} bands so far'.format(len(allbands)))
 
     c = []
     for j in allbands:
