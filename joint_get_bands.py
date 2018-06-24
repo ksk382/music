@@ -282,8 +282,8 @@ def KCRW_harvest(maxbands):
     print ('Grabbing KCRW bands')
     while (i<20) and len(allbands)<maxbands:
         url = 'https://tracklist-api.kcrw.com/Simulcast/all/' + str(i)
-        response = urllib.request.urlopen(url)
-        data = json.loads(response.read())
+        response = urllib.request.urlopen(url).read()
+        data = json.loads(response)
         print(("KCRW page {0} \n".format(i)))
         for entry in data:
             bandname = entry["artist"]
