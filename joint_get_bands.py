@@ -47,6 +47,7 @@ def Pitchfork_charts(maxbands):
 def metacritic(maxbands):
 
     url = 'http://www.metacritic.com/browse/albums/score/metascore/year/filtered'
+    socket.setdefaulttimeout(15)
 
     try:
         browser = webdriver.Chrome()  # replace with .Firefox(), or with the browser of your choice

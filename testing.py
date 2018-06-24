@@ -1,34 +1,53 @@
-from joint_concert_finder import grabBIT, grabTFLY
-from joint_build_database import locales, band, gig
-import datetime as dt
-from sqlalchemy import create_engine
-from sqlalchemy import MetaData, Table
-from sqlalchemy.orm import sessionmaker, scoped_session
-from joint_build_database import db
+
+# -*- coding: utf-8 -*-
 from gsheetpull import sheetpull
+import urllib.request, json, getopt
+import datetime as dt
+from bs4 import BeautifulSoup
+from joint_build_database import band
+from pytz import timezone
+from selenium import webdriver
+import socket
 
-def gettheshows(Session):
-    session = Session()
-    bandlist = session.query(band)
-    places = session.query(locales)
-    t = dt.date.today()
+def metacritic(maxbands):
 
-    showlist = grabBIT(bandlist, places)
-    for i in showlist:
-        q = session.query(gig).filter(gig.date == i.date, gig.cleanname == i.cleanname)
-        if q.first() == None:
-            try:
-                print(("Adding {0} at {1} on {2} (from {3})".format(i.name, i.venue, i.date, 'Bandsintown')))
-            except:
-                print ('Added unprintable show from Bandsintown')
-            i.dateadded = t
-            session.add(i)
-            session.commit()
+    url = 'http://www.metacritic.com/browse/albums/score/metascore/year/filtered'
+    socket.setdefaulttimeout(15)
 
+    try:
+        browser = webdriver.Chrome()  # replace with .Firefox(), or with the browser of your choice
+    except:
+        try:
+            browser = webdriver.Firefox()  # replace with .Firefox(), or with the browser of your choice
+        except:
+            print ('Metacritic failed. Returning nothing')
+            return []
 
-    return
+    browser.get(url)  # navigate to the page
+    innerHTML = browser.execute_script("return document.body.innerHTML")
+
+    bs = BeautifulSoup(innerHTML, 'html.parser')
+
+    allbands = []
+
+    a = bs.find('div', {'class': 'product_rows'})
+    b = a.find_all('div', {'class': 'product_row release'})
+    for i in b:
+        artist = i.find('div', {'class': 'product_item product_artist'}).text.strip()
+        album = i.find('div', {'class': 'product_item product_title'}).text.strip()
+        newband = band(name=artist, appeared='Metacritic', album = album)
+        allbands.append(newband)
+
+    browser.quit()
+
+    c = []
+    for j in allbands:
+        if j not in c:
+            c.append(j)
+
+    return c[:maxbands]
+
 
 if __name__ == "__main__":
-    v = sheetpull()
-    print (v)
-    print (len(v))
+    
+    metacritic(50)

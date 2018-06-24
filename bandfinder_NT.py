@@ -4,7 +4,7 @@ from joint_music_utilities import cleandb, cleanup, shredTTOTMs
 from joint_build_database import band
 
 maxbands = 200
-bandsources = ['KEXP playlists', 'Pitchfork', 'KEXP charts', 'Metacritic', 'KCRW']
+bandsources = ['Metacritic', 'KCRW', 'KEXP playlists', 'Pitchfork', 'KEXP charts']
 
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.
@@ -46,7 +46,11 @@ def grabbands(src):
     if src == 'KEXP playlists':
         list = KEXP_harvest(maxbands)
     if src == 'Metacritic':
-        list = metacritic(maxbands)
+        try:
+            list = metacritic(maxbands)
+        except Exception as e:
+            print (str(e))
+            pass
     return list
 
 if __name__ == "__main__":
