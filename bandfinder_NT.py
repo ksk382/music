@@ -3,7 +3,6 @@ import datetime as dt
 from joint_music_utilities import cleandb, cleanup, shredTTOTMs
 from joint_build_database import band
 
-maxbands = 200
 bandsources = ['Stereogum', 'Metacritic', 'KCRW', 'KEXP playlists', 'Pitchfork', 'KEXP charts']
 
 def getthebands(Session):
@@ -53,8 +52,12 @@ def grabbands(src):
             print (str(e))
             pass
     if src == 'Stereogum':
-
-        list = sgum(maxbands)
+        try:
+            list = sgum(maxbands)
+        except Exception as e:
+            list = []
+            print (str(e))
+            pass
 
     return list
 
