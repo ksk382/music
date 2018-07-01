@@ -45,6 +45,104 @@ def Pitchfork_charts(maxbands):
     return c[:maxbands]
 
 
+def pfork_tracks(maxbands):
+    c = []
+    allbands = []
+    i = 0
+    while (len(allbands) < maxbands) and (i < 50):
+        i = i + 1
+        try:
+            print(('Pitchfork page: {0}'.format(i)))
+            site = 'https://pitchfork.com/reviews/tracks/?page=' + str(i)
+            hdr = {'User-Agent': 'Mozilla/5.0'}
+            req = urllib.request.Request(site, headers=hdr)
+            page = urllib.request.urlopen(req)
+            soup = BeautifulSoup(page, "html.parser")
+            a = soup.findAll("div", {"class": "track-collection-item__details"})
+            print(("Page {0} retrieved".format(i)))
+            for banddiv in a:
+                artist = banddiv.find('ul', {'class': 'artist-list'}).li.text \
+                    .strip().replace('”', '').replace('“', '')
+                track = banddiv.find('h2', {'class': 'track-collection-item__title'}).text \
+                    .strip().replace('”', '').replace('“', '')
+                print (artist, track)
+                newband = band(name=artist, appeared='Pitchfork Top Tracks',
+                               song=track)
+                allbands.append(newband)
+        except Exception as e:
+            print (str(e))
+            print(("Page {0} failed".format(i)))
+            continue
+
+    for j in allbands:
+        if j not in c:
+            c.append(j)
+
+    return c[:maxbands]
+
+def MTM(maxbands):
+
+    url = 'http://feeds.kexp.org/kexp/musicthatmatters'
+    hdr = {'User-Agent': 'Mozilla/5.0'}
+    req = urllib.request.Request(url, headers=hdr)
+    page = urllib.request.urlopen(req)
+    bs = BeautifulSoup(page, "html.parser")
+
+    allbands = []
+    maxbands = 200
+    c = []
+
+    for item in bs.findAll('item'):
+        if len(allbands) <= maxbands:
+            desc = item.find('description').text
+            tr = False
+            s = ''
+            n = []
+
+            for g in range(0, len(desc)):
+                if desc[g].isdigit():
+                    if desc[g + 1].isdigit() or desc[g + 1] == '.':
+                        tr = False
+                        if len(s) > 0:
+                            n.append(s)
+                        s = ''
+                if desc[g] == '.':
+                    if desc[g - 1].isdigit():
+                        tr = True
+                if tr == True:
+                    s = s + desc[g]
+
+            for i in n:
+                h = i[2:].strip().split('<')[0]
+                egg = h.split('-')
+                if len(egg) < 2:
+                    egg = h.split('–')
+                if len(egg) < 2:
+                    egg = h.split('-')
+
+                try:
+                    artist = egg[0].strip()
+                    song = egg[1].strip()
+                    newband = band(name=artist, appeared='KEXP Music That Matters',
+                                   song=song)
+                    allbands.append(newband)
+                except Exception as e:
+                    print (str(e))
+                    try:
+                        print (h)
+                    except:
+                        print('unprintable')
+                    continue
+
+    for j in allbands:
+        if j not in c:
+            c.append(j)
+
+    return c[:maxbands]
+
+
+
+
 def metacritic(maxbands):
 
     socket.setdefaulttimeout(15)
