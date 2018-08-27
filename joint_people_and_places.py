@@ -1,11 +1,12 @@
 from geopy.geocoders import Nominatim
 from joint_build_database import monther, locales
 import json
+import requests
 
 def identify_people(Session, json_name):
     session = Session()
     session.query(monther).delete()
-    geolocator = Nominatim()
+    geolocator = Nominatim(user_agent="showtime3")
 
     with open(json_name) as mlist:
         data = json.load(mlist)
@@ -15,10 +16,13 @@ def identify_people(Session, json_name):
         state = data[line]['state']
         email = data[line]['email']
         radius = data[line]['radius']
-        a = city + ',' + state
-        location = geolocator.geocode(a, timeout=4)
-        lat = location.latitude
-        long = location.longitude
+        a = city + ', ' + state
+        map_string = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '+' + state
+        response = requests.get(map_string)
+        resp_json_payload = response.json()
+        x_ll = resp_json_payload['results'][0]['geometry']['location']
+        lat = x_ll['lat']
+        long = x_ll['lng']
         sig = city+state+radius
         newmonther = monther(email=email, city=city, state=state, lat=lat, long=long, radius=radius, sig=sig)
         q = session.query(monther).filter(monther.email == newmonther.email, monther.city == newmonther.city)
