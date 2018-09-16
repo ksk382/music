@@ -16,13 +16,18 @@ def identify_people(Session, json_name):
         state = data[line]['state']
         email = data[line]['email']
         radius = data[line]['radius']
-        a = city + ', ' + state
-        map_string = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '+' + state
-        response = requests.get(map_string)
-        resp_json_payload = response.json()
-        x_ll = resp_json_payload['results'][0]['geometry']['location']
-        lat = x_ll['lat']
-        long = x_ll['lng']
+        try:
+            lat = data[line]['lat']
+            long = data[line]['long']
+        except:
+            #but Google Maps API is not working
+            a = city + ', ' + state
+            map_string = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '+' + state
+            response = requests.get(map_string)
+            resp_json_payload = response.json()
+            x_ll = resp_json_payload['results'][0]['geometry']['location']
+            lat = x_ll['lat']
+            long = x_ll['lng']
         sig = city+state+radius
         newmonther = monther(email=email, city=city, state=state, lat=lat, long=long, radius=radius, sig=sig)
         q = session.query(monther).filter(monther.email == newmonther.email, monther.city == newmonther.city)
