@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from joint_build_database import band
 
 #grab bands from the other two databases
-databases = ['sqlite:///dbNonTTOTM.db', 'sqlite:///dbTTOTM.db']
+databases = ['sqlite:///../databases/dbNonTTOTM.db', 'sqlite:///../databases/dbTTOTM.db']
 
 engines = []
 sessions = []

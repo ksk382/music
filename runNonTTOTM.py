@@ -16,7 +16,7 @@ import sys
 socket.setdefaulttimeout(15)
 # creation of the SQL database and the "session" object that is used to manage
 # communications with the database
-engine = create_engine('sqlite:///dbNonTTOTM.db')
+engine = create_engine('sqlite:///../databases/dbNonTTOTM.db')
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
 
