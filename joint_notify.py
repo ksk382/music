@@ -82,10 +82,8 @@ def send_email(Session, target, message, ttotm, live_mode):
     msg = MIMEText(message)#.encode('utf-8'))
 
     a = dt.date.today()
-    if ttotm == True:
-        filler = 'TTOTM'
-    else:
-        filler = 'Top'
+
+    filler = ttotm
     msg['Subject'] = '{2} Shows for {0} ({1})'.format(target.city, a.strftime("%m/%d").lstrip('0'), filler)
     msg['From'] = sender
     msg['To'] = email

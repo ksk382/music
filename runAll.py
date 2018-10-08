@@ -21,7 +21,7 @@ metadata = MetaData(db)
 db.metadata.create_all(engine)
 
 session = Session()
-ttotm = False
+ttotm = 'Top'
 json_name = '../showtime_creds/ajsongetall.json'
 
 if __name__ == "__main__":
