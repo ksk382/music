@@ -8,6 +8,7 @@ from pytz import timezone
 import socket
 from selenium import webdriver
 import re
+from random import shuffle
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
@@ -141,8 +142,6 @@ def MTM(maxbands):
     return c[:maxbands]
 
 
-
-
 def metacritic(maxbands):
 
     socket.setdefaulttimeout(15)
@@ -197,7 +196,6 @@ def sgum(maxbands):
         bs = BeautifulSoup(innerHTML, 'html.parser')
 
         driver.quit()
-
 
         a = bs.find_all('h2')
         for i in a:
@@ -262,12 +260,23 @@ def KEXP_charts(maxbands):
             newband = band(name=artist, appeared = genre, album = album)
             allbands.append(newband)
 
-    c = []
-    for j in allbands:
-        if j not in c:
-            c.append(j)
-    return c[:maxbands]
+    # half of this list will be the Top 90
+    d = []
+    e = []
+    for i in allbands:
+        if i.appeared == 'KEXP Top 90':
+            if i not in d:
+                d.append(i)
+        else:
+            if i not in e:
+                e.append(i)
 
+    half = maxbands // 2
+    d = d[:half]
+    shuffle(e)
+    c = d + e[half:maxbands]
+
+    return c[:maxbands]
 
 def KEXP_harvest(maxbands):
 

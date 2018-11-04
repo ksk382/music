@@ -9,6 +9,8 @@ bandsources = ['KEXP Music That Matters', 'Pitchfork Top Tracks',
                'Stereogum', 'Metacritic', 'KCRW', 'KEXP playlists',
                'Pitchfork', 'KEXP charts']
 
+bandsources = ['KEXP charts']
+
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.
     # each source, however, needs its own function, since the
@@ -43,6 +45,7 @@ def grabbands(src):
     if src == 'Pitchfork':
         list = Pitchfork_charts(maxbands)
     if src == 'KEXP charts':
+        maxbands = 150
         list = KEXP_charts(maxbands)
     if src == 'KCRW':
         list = KCRW_harvest(maxbands)
