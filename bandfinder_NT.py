@@ -9,8 +9,6 @@ bandsources = ['KEXP Music That Matters', 'Pitchfork Top Tracks',
                'Stereogum', 'Metacritic', 'KCRW', 'KEXP playlists',
                'Pitchfork', 'KEXP charts']
 
-bandsources = ['KEXP charts']
-
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.
     # each source, however, needs its own function, since the
