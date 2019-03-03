@@ -285,12 +285,13 @@ def KEXP_harvest(maxbands):
     shows = {
         'Swingin Doors': {'day': '3', 'time': '18:00', 'duration': 3},
         'Roadhouse': {'day': '2', 'time': '18:00', 'duration': 3},
-        'DJ Riz': {'day': '0', 'time': '21:00', 'duration': 3},
-        'Street Sounds': {'day': '6', 'time': '18:00', 'duration': 3},
+        'Expansions': {'day': '6', 'time': '21:00', 'duration': 3},
+        'Street Sounds': {'day': '4', 'time': '21:00', 'duration': 3},
         'El Toro': {'day': '2', 'time': '21:00', 'duration': 3},
         'Jazz Theater': {'day': '0', 'time': '01:00', 'duration': 2},
         'Sonic Reducer': {'day': '5', 'time': '21:00', 'duration': 3},
-        'Troy Nelson': {'day': '5', 'time': '15:00', 'duration': 3}
+        'Troy Nelson': {'day': '5', 'time': '15:00', 'duration': 3},
+        'Sunday Soul': {'day': '6', 'time': '18:00', 'duration': 3}
     }
 
     today = dt.date.today()
