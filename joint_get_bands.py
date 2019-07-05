@@ -57,7 +57,7 @@ def pfork_tracks(maxbands):
     c = []
     allbands = []
     i = 0
-    while (len(allbands) < maxbands) and (i < 50):
+    while (len(allbands) < maxbands) and (i < 20):
         i = i + 1
         try:
             print(('Pitchfork page: {0}'.format(i)))
@@ -81,6 +81,8 @@ def pfork_tracks(maxbands):
             print (str(e))
             print(("Page {0} failed".format(i)))
             continue
+
+        print ('Found {0} bands so far'.format(len(allbands)))
 
     for j in allbands:
         if j not in c:
@@ -378,7 +380,7 @@ def KEXP_harvest(show, showname, max_length):
             print ('\n')
             try:
                 response = urllib.request.urlopen(url)
-                data = json.loads(response.read())
+                data = json.loads(response.read().decode('utf-8'))
                 dump = data['results']
                 print('Success.\n')
             except getopt.GetoptError as e:

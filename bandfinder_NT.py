@@ -5,9 +5,14 @@ import datetime as dt
 from joint_music_utilities import cleandb, cleanup, shredTTOTMs
 from joint_build_database import band
 
-bandsources = ['KCRW', 'KEXP Music That Matters', 'Pitchfork Top Tracks',
-               'Stereogum', 'Metacritic', 'KEXP playlists',
-               'Pitchfork', 'KEXP charts']
+bandsources = ['KEXP playlists',
+               'KCRW',
+               'KEXP Music That Matters',
+               'Pitchfork Top Tracks',
+               'Stereogum',
+               'Metacritic',
+               'Pitchfork',
+               'KEXP charts']
 
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.
@@ -66,7 +71,7 @@ def grabbands(src):
             pass
     if src == 'Pitchfork Top Tracks':
         try:
-            list = pfork_tracks(200)
+            list = pfork_tracks(50)
         except Exception as e:
             list = []
             print (str(e))
