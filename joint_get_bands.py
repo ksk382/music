@@ -40,6 +40,7 @@ def Pitchfork_charts(maxbands):
                 album = banddiv.findNext("h2").text
                 newband = band(name=banddiv.text, appeared='Pitchfork 8.0+ reviews', album = album)
                 allbands.append(newband)
+            print ('Grabbed {0} bands from Pitchfork'.format(len(allbands)))
         except Exception as e:
             print (str(e))
             print(("Page {0} failed".format(i)))
@@ -297,7 +298,7 @@ def KCRW_harvest(maxbands):
     while (i<30) and len(allbands)<maxbands:
         url = 'https://tracklist-api.kcrw.com/Simulcast/all/' + str(i)
         response = urllib.request.urlopen(url).read()
-        data = json.loads(response)
+        data = json.loads(response.decode('utf-8'))
         print(("KCRW page {0} \n".format(i)))
         for entry in data:
             bandname = entry["artist"]
