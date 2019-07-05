@@ -46,7 +46,7 @@ def prepmsg(Session, target, quote, ttotm):
         if combo_show == False:
             line = [cleandate, show.name, show.venue, show.city, source, theband.comment]
             message_lines.append(line)
-            if theband.spotify_id is not None:
+            if theband.spotify_id is not None and theband.spotify_id not in track_ids:
                 track_ids.append(theband.spotify_id)
 
     for i in message_lines:
