@@ -2,12 +2,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
-import socket
-from sqlalchemy import create_engine
-from sqlalchemy import MetaData
-from sqlalchemy.orm import sessionmaker, scoped_session
-import random
-import pandas as pd
 import yaml
 from pprint import pprint
 from joint_build_database import monther, gig, band
