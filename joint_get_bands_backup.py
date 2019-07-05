@@ -1,20 +1,14 @@
 # -*- coding: utf-8 -*-
 from gsheetpull import sheetpull
-from joint_build_database import band
-from gsheetpull import sheetpull
 import urllib.request, json, getopt
+import datetime as dt
 from bs4 import BeautifulSoup
+from joint_build_database import band
+from pytz import timezone
 import socket
 from selenium import webdriver
 import re
 from random import shuffle
-import datetime as dt
-from pytz import timezone
-
-def get_TTOTM_bands():
-    TTOTMbands = sheetpull()
-    print(('{0} total TTOTM tracks'.format(len(TTOTMbands))))
-    return TTOTMbands
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
@@ -145,9 +139,6 @@ def MTM(maxbands):
         if j not in c:
             c.append(j)
 
-    for i in c[:maxbands]:
-        print (i.name, i.song)
-
     return c[:maxbands]
 
 
@@ -239,36 +230,35 @@ def KEXP_charts(maxbands):
     page = urllib.request.urlopen(req)
     bs = BeautifulSoup(page, "html.parser")
 
-    for heading in bs.findAll('h4'):
-        genre = heading.text.strip()[:-1]
-        print (genre)
-        contents = (heading.findNext('p').text).splitlines()
-        for i in contents:
-            if i == []:
-                print ('empty')
-                continue
-            elif len(i) > 1:
-                a = i
-                b = a.split()
-                if b[0][0].isdigit():
-                    b.remove(b[0])
-                e = ' '.join(i for i in b)
-                e = e.replace('(self-released)', '')
-                # print (c)
-                d = e.split('-')
-                if len(d) == 2:
-                    artist = d[0]
-                    parens = d[1].find('(')
-                    album = d[1][:parens].strip()
-                d = e.split('–')
-                if len(d) == 2:
-                    artist = d[0].strip()
-                    parens = d[1].find('(')
-                    album = d[1][:parens].strip()
+    for row in bs.findAll('p', {'class': 'paragraph'}):
+        if row.b:
+            genre = 'KEXP ' + row.b.text.strip(':')
+            print (genre)
+        elif row.text == []:
+            print ('empty')
+            continue
+        elif len(row.text) > 1:
+            a = row.text
+            b = a.split()
+            if b[0][0].isdigit():
+                b.remove(b[0])
+            e = ' '.join(i for i in b)
+            e = e.replace('(self-released)', '')
+            # print (c)
+            d = e.split('-')
+            if len(d) == 2:
+                artist = d[0]
+                parens = d[1].find('(')
+                album = d[1][:parens]
+            d = e.split('–')
+            if len(d) == 2:
+                artist = d[0].strip()
+                parens = d[1].find('(')
+                album = d[1][:parens].strip()
 
-                print (artist, album)
-                newband = band(name=artist, appeared=genre, album=album)
-                allbands.append(newband)
+            print (artist, album)
+            newband = band(name=artist, appeared = genre, album = album)
+            allbands.append(newband)
 
     # half of this list will be the Top 90
     d = []
@@ -288,38 +278,9 @@ def KEXP_charts(maxbands):
 
     return c[:maxbands]
 
+def KEXP_harvest(maxbands):
 
-def KCRW_harvest(maxbands):
-    c = []
-    i = 1
-    allbands = []
-    print ('Grabbing KCRW bands')
-    while (i<30) and len(allbands)<maxbands:
-        url = 'https://tracklist-api.kcrw.com/Simulcast/all/' + str(i)
-        response = urllib.request.urlopen(url).read()
-        data = json.loads(response)
-        print(("KCRW page {0} \n".format(i)))
-        for entry in data:
-            bandname = entry["artist"]
-            trackname = entry['title']
-            if entry["program_title"] == "Morning Becomes Eclectic":
-                if bandname != "[BREAK]":
-                    newband = band(name=bandname, song=trackname, appeared = 'KCRW Eclectic')
-                    allbands.append(newband)
-            else:
-                if bandname != "[BREAK]":
-                    newband = band(name=bandname, song=trackname, appeared = 'not KCRW Eclectic')
-                    allbands.append(newband)
-        i+=1
-
-    for j in allbands:
-        if j not in c:
-            c.append(j)
-
-    return c[:maxbands]
-
-
-def load_kexp_bands(maxbands):
+    socket.setdefaulttimeout(5)
 
     shows = {
         'Swingin Doors': {'day': '3', 'time': '18:00', 'duration': 3},
@@ -333,27 +294,19 @@ def load_kexp_bands(maxbands):
         'Sunday Soul': {'day': '6', 'time': '18:00', 'duration': 3}
     }
 
-    all_bands = []
+    today = dt.date.today()
+    alltracks = []
+    allbands = []
+
+    i = 0
     for show in shows:
-        target = shows[show]
-        showname = show
-        k = KEXP_harvest(target, showname, max_length=maxbands)
-        all_bands = all_bands + k
-    return all_bands
-
-
-def KEXP_harvest(show, showname, max_length):
-        today = dt.date.today()
-        alltracks = []
-
-        i = 0
-        while len(alltracks) < max_length and i < 20:
-
-            showtracks = []
-
-            offset = (today.weekday() - int(show['day'])) % 7 + (i * 7)
+        found_at = show
+        allshowfinds = []
+        while len(allshowfinds) < maxbands and i < 20:
+            showbands = []
+            offset = (today.weekday() - int(shows[show]['day'])) % 7 + (i * 7)
             showday = today - dt.timedelta(days=offset)
-            showtime = show['time'] + ':00'
+            showtime = shows[show]['time'] + ':00'
             combined = str(showday) + ' ' + showtime
             seattletime = dt.datetime.strptime(combined, '%Y-%m-%d %H:%M:%S')
 
@@ -365,22 +318,29 @@ def KEXP_harvest(show, showname, max_length):
             utc = timezone('UTC')
             starttime = seattletime.astimezone(utc)
 
-            duration = show['duration']
+            duration = shows[show]['duration']
+            endtime = starttime + dt.timedelta(hours=(duration))
+            startstring = dt.datetime.strftime(starttime, '%Y-%m-%dT%H:%M:%S') + 'Z'
+            endstring = dt.datetime.strftime(endtime, '%Y-%m-%dT%H:%M:%S') + 'Z'
+
+            print ('\n\n\n\n')
+            print (startstring)
+            print (endstring)
+
             endtime = starttime + dt.timedelta(hours=(duration))
             startstring = dt.datetime.strftime(starttime, '%Y-%m-%dT%H:%M:%S') + 'Z'
             endstring = dt.datetime.strftime(endtime, '%Y-%m-%dT%H:%M:%S') + 'Z'
             url = 'https://legacy-api.kexp.org/play/?limit=200&start_time={0}&end_time={1}&ordering=-airdate'. \
                 format(startstring, endstring)
             # https://legacy-api.kexp.org/play/?limit=200&start_time=2017-08-10T23:00:00&end_time=2017-08-11T02:00:00&ordering=-airdate
-            print('{3}. {2} playlist: {0} to {1}'.format(startstring, endstring, showname, i))
+            print('{3}. Grabbing bands from the KEXP {2} playlist: {0} to {1}'.format(startstring, endstring, show, i))
             print (url)
             print ('\n')
             try:
                 response = urllib.request.urlopen(url)
                 data = json.loads(response.read())
                 dump = data['results']
-                print('Success.\n')
-            except getopt.GetoptError as e:
+            except Exception as e:
                 print (str(e), '\n')
                 dump = []
 
@@ -401,31 +361,49 @@ def KEXP_harvest(show, showname, max_length):
                             continue
                         if item['track'] is None:
                             continue
-                        name = item['artist']['name']
-                        song = item['track']['name']
-                        try:
-                            album = item['release']['name']
-                        except:
-                            album = ''
-                        try:
-                            release_year = item['releaseevent']['year']
-                        except:
-                            release_year = ''
-                        newband = band(name=name, song=song, appeared=showname)
-                        showtracks.append(newband)
-                    except getopt.GetoptError as e:
+                        newband = band(name=item['artist']['name'], song=item['track']['name'], appeared=found_at)
+                        showbands.append(newband)
+                    except Exception as e:
+                        print((str(e)))
+                        print('\n')
                         pass
-            alltracks = alltracks + showtracks
-            print ('Tracks gathered from this show date:    {0}'.format(len(showtracks)))
-            print ('Tracks gathered from this show (total): {0}\n\n'.format(len(alltracks)))
-            i = i + 1
+            bandlist = [k.name for k in showbands]
+            print (bandlist)
+            allshowfinds = allshowfinds + showbands
+            i = i+1
+        allbands = allbands + allshowfinds
 
-        k = []
-        for t1 in alltracks:
-            if t1 not in k:
-                k.append(t1)
-        return k
+    c = []
+    for j in allbands:
+        if j not in c:
+            c.append(j)
 
-if __name__ == "__main__":
+    socket.setdefaulttimeout(15)
 
-    MTM(100)
+    return c
+
+
+def KCRW_harvest(maxbands):
+    c = []
+    i = 1
+    allbands = []
+    print ('Grabbing KCRW bands')
+    while (i<20) and len(allbands)<maxbands:
+        url = 'https://tracklist-api.kcrw.com/Simulcast/all/' + str(i)
+        response = urllib.request.urlopen(url).read()
+        data = json.loads(response)
+        print(("KCRW page {0} \n".format(i)))
+        for entry in data:
+            bandname = entry["artist"]
+            trackname = entry['title']
+            if bandname != "[BREAK]":
+                newband = band(name=bandname, song=trackname, appeared = 'KCRW')
+                allbands.append(newband)
+        i+=1
+
+    for j in allbands:
+        if j not in c:
+            c.append(j)
+
+    return c[:maxbands]
+

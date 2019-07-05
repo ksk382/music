@@ -9,9 +9,7 @@ from joint_build_database import db
 from joint_people_and_places import identify_people, identify_places
 from joint_notify import notify
 import sys
-#from setup_quote_db import make_new_db
-#from db_management import copy_quotes
-
+from joint_spotify_work import find_spotify_ids
 
 socket.setdefaulttimeout(15)
 # creation of the SQL database and the "session" object that is used to manage
@@ -40,8 +38,9 @@ if __name__ == "__main__":
         print ('Running in test.')
         live_mode = False
 
-    identify_people(Session, json_name)
-    identify_places(Session)
-    getthebands(Session)
-    gettheshows(Session)
+    #identify_people(Session, json_name)
+    #identify_places(Session)
+    #getthebands(Session)
+    #gettheshows(Session)
+    #find_spotify_ids(Session)
     notify(Session, ttotm, live_mode=live_mode)

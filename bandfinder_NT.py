@@ -1,5 +1,5 @@
 from joint_get_bands import Pitchfork_charts, KCRW_harvest, \
-    KEXP_charts, KEXP_harvest, metacritic, sgum, pfork_tracks, \
+    KEXP_charts, load_kexp_bands, metacritic, sgum, pfork_tracks, \
     MTM
 import datetime as dt
 from joint_music_utilities import cleandb, cleanup, shredTTOTMs
@@ -8,8 +8,6 @@ from joint_build_database import band
 bandsources = ['KEXP Music That Matters', 'Pitchfork Top Tracks',
                'Stereogum', 'Metacritic', 'KCRW', 'KEXP playlists',
                'Pitchfork', 'KEXP charts']
-
-bandsources = ['KEXP Music That Matters']
 
 def getthebands(Session):
     # this loop pulls down band names from the sources identified.
@@ -50,7 +48,7 @@ def grabbands(src):
     if src == 'KCRW':
         list = KCRW_harvest(maxbands)
     if src == 'KEXP playlists':
-        list = KEXP_harvest(maxbands)
+        list = load_kexp_bands(maxbands)
     if src == 'Metacritic':
         try:
             list = metacritic(maxbands)

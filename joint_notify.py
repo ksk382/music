@@ -5,6 +5,7 @@ import smtplib
 from joint_music_utilities import cleandb, cleanish
 from joint_quotes import get_a_quote
 import json
+from joint_spotify_work import do_a_playlist
 
 tdelta = 60
 
@@ -20,47 +21,63 @@ def notify(Session, ttotm, live_mode):
             send_email(Session, target, message, ttotm, True)
     else:
         for target in targets:
-            message = prepmsg(Session, target, quote)
+            message = prepmsg(Session, target, quote, ttotm)
             send_email(Session, target, message, ttotm, False)
 
-def prepmsg(Session, target, quote):
+def prepmsg(Session, target, quote, ttotm):
     session = Session()
     listofbands = session.query(band)
-    message = quote + '\n\n'
-    message = message + "Shows happening in the next {2} days within {0} miles of {1}:".format(target.radius, target.city, tdelta)
-    message = message + "\n" + "(Checked {0} bands)".format(listofbands.count()) + '\n'
     allshows = session.query(gig).order_by(gig.date.asc()).filter(gig.queryby == target.sig)
     message_lines = []
-    try:
-        for show in allshows:
-            theband = session.query(band).filter(band.cleanname == show.cleanname).first()
-            cleandate = show.date[5:7].lstrip('0') + '/' + show.date[8::]
-            combo_show = False
-            source = theband.appeared
-            for i in message_lines:
-                if i[0] == cleandate and cleanish(i[2]) == cleanish(show.venue):
-                    combo_show = True
-                    i[1] = i[1] + ' and ' + show.name
-                    if i[4] != source:
-                        i[4] = i[4] + ', ' + source
-            if combo_show == False:
-                line = [cleandate, show.name, show.venue, show.city, source, theband.comment]
-                message_lines.append(line)
-        for i in message_lines:
-            print(i)
-            line = '{0} {1} @ {2}, {3}'.format(i[0], i[1], i[2], i[3])
-            message = message + '\n' + line + '\n' + '   ({0})'.format(i[4]) + '\n'
-            if i[5] != None:
-                comment = 'Comment: ' + i[5]
-                message = message + '   ({0})'.format(comment) + '\n'
+    track_ids = []
+    show_list = ''
 
-    except Exception as e:
-        print((str(e)))
-        print((show.cleanname))
+    for show in allshows:
+        theband = session.query(band).filter(band.cleanname == show.cleanname).first()
+        cleandate = show.date[5:7].lstrip('0') + '/' + show.date[8::]
+        combo_show = False
+        source = theband.appeared
+        for i in message_lines:
+            if i[0] == cleandate and cleanish(i[2]) == cleanish(show.venue):
+                combo_show = True
+                i[1] = i[1] + ' and ' + show.name
+                if i[4] != source:
+                    i[4] = i[4] + ', ' + source
+        if combo_show == False:
+            line = [cleandate, show.name, show.venue, show.city, source, theband.comment]
+            message_lines.append(line)
+            if theband.spotify_id is not None:
+                track_ids.append(theband.spotify_id)
+
+    for i in message_lines:
+        print(i)
+        line = '{0} {1} @ {2}, {3}'.format(i[0], i[1], i[2], i[3])
+        show_list = show_list + '\n' + line + '\n' + '   ({0})'.format(i[4]) + '\n'
+        if i[5] != None:
+            comment = 'Comment: ' + i[5]
+            show_list = show_list + '   ({0})'.format(comment) + '\n'
+
+    if ttotm:
+        playlist_name = 'Upcoming {0} TTOTM Shows'.format(target.city)
+    else:
+        playlist_name = 'Upcoming {0} Shows'.format(target.city)
+    print (track_ids)
+    input('enter')
+    link = do_a_playlist(track_ids, playlist_name)
+
+    full_message = quote + '\n\n'
+    full_message = full_message + "Shows happening in the next {2} days within {0} miles of {1}:".format(target.radius,
+                                                                                               target.city, tdelta)
+    full_message = full_message + "\n" + "(Checked {0} bands--here is a Spotify playlist " \
+                                         "with tracks from the bands on this list: {1})".format(listofbands.count(), link) + '\n'
+    full_message = full_message + show_list
 
     print('\n\n\n\n')
-    print(message)
-    return message
+    print(full_message)
+
+    input('enter')
+
+    return full_message
 
 
 def send_email(Session, target, message, ttotm, live_mode):

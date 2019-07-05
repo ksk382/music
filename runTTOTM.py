@@ -9,6 +9,7 @@ from joint_build_database import db, locales
 from joint_people_and_places import identify_people, identify_places
 from joint_notify import notify
 import sys
+from joint_spotify_work import find_spotify_ids
 
 socket.setdefaulttimeout(15)
 # creation of the SQL database and the "session" object that is used to manage
@@ -41,4 +42,5 @@ if __name__ == "__main__":
     identify_places(Session)
     getthebands(Session)
     gettheshows(Session)
+    find_spotify_ids(Session)
     notify(Session, ttotm, live_mode=live_mode)

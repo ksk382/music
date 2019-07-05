@@ -46,6 +46,8 @@ class band(db):
     source = Column(String(64), index=True)
     dateadded = Column(String(64), index=True)
     comment = Column(String(64), index=True)
+    spotify_id = Column(String(64), index=True)
+    google_play_id = Column(String(64), index=True)
 
     def __repr__(self):
         return '<Table Name: %s>' % self.name
