@@ -25,8 +25,8 @@ def splog_on():
                                        client_secret=user_config['client_secret'],
                                        redirect_uri=user_config['redirect_uri'])
     if token:
-        print ('Success')
         sp = spotipy.Spotify(auth=token)
+        print ('Login success')
     else:
         print ("Can't get token for", user_config['username'])
     return sp, username
