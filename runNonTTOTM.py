@@ -38,9 +38,9 @@ if __name__ == "__main__":
         print ('Running in test.')
         live_mode = False
 
-    identify_people(Session, json_name)
-    identify_places(Session)
-    getthebands(Session)
-    gettheshows(Session)
+    #identify_people(Session, json_name)
+    #identify_places(Session)
+    #getthebands(Session)
+    #gettheshows(Session)
     find_spotify_ids(Session)
     notify(Session, ttotm, live_mode=live_mode)
