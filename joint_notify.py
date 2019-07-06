@@ -62,7 +62,7 @@ def prepmsg(Session, target, quote, ttotm):
     else:
         playlist_name = 'Upcoming {0} Shows'.format(target.city)
     print (track_ids)
-    input('enter')
+
     link = do_a_playlist(track_ids, playlist_name)
 
     full_message = quote + '\n\n'
@@ -74,8 +74,6 @@ def prepmsg(Session, target, quote, ttotm):
 
     print('\n\n\n\n')
     print(full_message)
-
-    input('enter')
 
     return full_message
 
