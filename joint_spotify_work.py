@@ -9,7 +9,7 @@ from joint_build_database import monther, gig, band
 def load_config():
     global user_config
     stream = open('../showtime_creds/config.yaml')
-    user_config = yaml.load(stream)
+    user_config = yaml.load(stream, Loader=yaml.BaseLoader)
     #pprint(user_config)
 
 def splog_on():
@@ -25,6 +25,7 @@ def splog_on():
                                        client_secret=user_config['client_secret'],
                                        redirect_uri=user_config['redirect_uri'])
     if token:
+        print ('Success')
         sp = spotipy.Spotify(auth=token)
     else:
         print ("Can't get token for", user_config['username'])
@@ -36,25 +37,26 @@ def find_spotify_ids(Session):
     sp, username = splog_on()
     for i in a:
         artist = i.name
-        song = i.song
-        id = None
-        query = 'artist:{0} track:{1}'.format(artist, song)
-        results = sp.search(q=query, type='track')
-        if results['tracks']['total'] == 0:
-            query = '{0} {1}'.format(artist, song)
+        if i.song is not None:
+            song = i.song
+            id = None
+            query = 'artist:{0} track:{1}'.format(artist, song)
             results = sp.search(q=query, type='track')
-        items = results['tracks']['items']
-        h = 0
-        for item in items:
-            if item['popularity'] > h:
-                h = item['popularity']
-                id = item['id']
-        i.spotify_id = id
-        if id is not None:
-            print ('Spotify found:  {} - {}'.format(artist, song))
-        else:
-            print ('Spotify failed: {} - {}'.format(artist, song))
-        session.commit()
+            if results['tracks']['total'] == 0:
+                query = '{0} {1}'.format(artist, song)
+                results = sp.search(q=query, type='track')
+            items = results['tracks']['items']
+            h = 0
+            for item in items:
+                if item['popularity'] > h:
+                    h = item['popularity']
+                    id = item['id']
+            i.spotify_id = id
+            if id is not None:
+                print ('Spotify found:  {} - {}'.format(artist, song))
+            else:
+                print ('Spotify failed: {} - {}'.format(artist, song))
+            session.commit()
     return
 
 def get_playlist_link(new_playlist_name):
