@@ -32,6 +32,7 @@ def splog_on():
     return sp, username
 
 def find_spotify_ids(Session):
+    print ('Obtaining spotify_ids')
     session = Session()
     a = session.query(band).filter(band.spotify_id == None)
     sp, username = splog_on()
