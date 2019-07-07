@@ -57,10 +57,8 @@ def prepmsg(Session, target, quote, ttotm):
             comment = 'Comment: ' + i[5]
             show_list = show_list + '   ({0})'.format(comment) + '\n'
 
-    if ttotm:
-        playlist_name = 'Upcoming {0} TTOTM Shows'.format(target.city)
-    else:
-        playlist_name = 'Upcoming {0} Shows'.format(target.city)
+
+    playlist_name = '{0} {1} Shows'.format(ttotm, target.city)
     print (track_ids)
 
     link = do_a_playlist(track_ids, playlist_name)

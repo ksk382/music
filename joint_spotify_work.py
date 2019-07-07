@@ -5,6 +5,8 @@ import spotipy.util as util
 import yaml
 from pprint import pprint
 from joint_build_database import monther, gig, band
+import progressbar
+from sqlalchemy import or_
 
 def load_config():
     global user_config
@@ -34,12 +36,22 @@ def splog_on():
 def find_spotify_ids(Session):
     print ('Obtaining spotify_ids')
     session = Session()
-    a = session.query(band).filter(band.spotify_id == None)
+    a = session.query(band).filter(or_(
+                            (band.spotify_id == None),
+                            (band.spotify_id == 'failed 1'))).filter(band.song != None)
     sp, username = splog_on()
-    for i in a:
-        artist = i.name
-        if i.song is not None:
+    count = 0
+    barmax = a.count()
+    tracksuccesses = []
+    trackfails = []
+    with progressbar.ProgressBar(max_value=barmax, redirect_stdout=True) as bar:
+        for i in a:
+            artist = i.name
             song = i.song
+            if band.spotify_id == 'failed 1':
+                fail_count = 1
+            else:
+                fail_count = 0
             id = None
             query = 'artist:{0} track:{1}'.format(artist, song)
             results = sp.search(q=query, type='track')
@@ -52,12 +64,19 @@ def find_spotify_ids(Session):
                 if item['popularity'] > h:
                     h = item['popularity']
                     id = item['id']
-            i.spotify_id = id
             if id is not None:
+                i.spotify_id = id
                 print ('Spotify found:  {} - {}'.format(artist, song))
+                tracksuccesses.append([artist, song])
             else:
                 print ('Spotify failed: {} - {}'.format(artist, song))
+                trackfails.append([artist, song])
+                i.spotify_id = 'failed {}'.format(fail_count + 1)
             session.commit()
+            count +=1
+            bar.update(count)
+    print ('Track successes:  {0}     Track fails:      {1}'.format(len(tracksuccesses), len(trackfails)))
+    input('enter')
     return
 
 def get_playlist_link(new_playlist_name):
@@ -153,3 +172,21 @@ def do_a_playlist(track_ids, new_playlist_name):
     add_songs_to_playlist(sp, username, playlist_id, track_ids)
     link = get_playlist_link(new_playlist_name)
     return link
+
+def delete_all_playlists(key_word):
+    sp, username = splog_on()
+    current_playlists = sp.user_playlists(username)
+    current_playlist_names = []
+    playlist_id = None
+    for playlist in current_playlists['items']:
+        x, y = playlist['name'], playlist['id']
+        print (x,y)
+        if key_word in x:
+            f = sp.user_playlist_unfollow(username, y)
+            print ('deleted {0}'.format(x))
+
+if __name__ == "__main__":
+
+    key_word = 'Upcoming'
+    print ("Deleting all playlists with '{0}' in them".format(key_word))
+    delete_all_playlists(key_word)
