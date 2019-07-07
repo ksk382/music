@@ -33,32 +33,32 @@ def direct_bands_in_town(Session):
     print ('Fetching Bandsintown data.')
     bandfails = []
     bandsuccesses = []
-    #with progressbar.ProgressBar(max_value=barmax, redirect_stdout=True) as bar:
-    for bandname in bandlist:
-        got_show_for_band = False
-        showlist = grab_bands_in_town(bandname, places, count)
-        if showlist is not None:
-            for k in showlist:
-                q = session.query(gig).filter(gig.date == k.date, gig.cleanname == k.cleanname)
-                if q.first() == None:
-                    try:
-                        print("Adding {0} at {1} on {2} (from {3})".format(k.name, k.venue, k.date, 'Bandsintown'))
-                    except:
-                        print ('Added unprintable show from Bandsintown')
-                    k.dateadded = t
-                    got_show_for_band = True
-                    session.add(k)
-                    session.commit()
-                else:
-                    print ("Already had {0} at {1} on {2} (from {3})".format(k.name, k.venue, k.date, 'Bandsintown'))
-                    got_show_for_band = True
-            if got_show_for_band == True:
-                bandsuccesses.append(bandname.cleanname)
-        if not got_show_for_band:
-            bandfails.append(bandname.cleanname)
-        print ('Bandsuccesses: {0}      Bandfails: {1}'.format(len(bandsuccesses), len(bandfails)))
-            #count += 1
-            #bar.update(count)
+    with progressbar.ProgressBar(max_value=barmax, redirect_stdout=True) as bar:
+        for bandname in bandlist:
+            got_show_for_band = False
+            showlist = grab_bands_in_town(bandname, places, count)
+            if showlist is not None:
+                for k in showlist:
+                    q = session.query(gig).filter(gig.date == k.date, gig.cleanname == k.cleanname)
+                    if q.first() == None:
+                        try:
+                            print("Adding {0} at {1} on {2} (from {3})".format(k.name, k.venue, k.date, 'Bandsintown'))
+                        except:
+                            print ('Added unprintable show from Bandsintown')
+                        k.dateadded = t
+                        got_show_for_band = True
+                        session.add(k)
+                        session.commit()
+                    else:
+                        print ("Already had {0} at {1} on {2} (from {3})".format(k.name, k.venue, k.date, 'Bandsintown'))
+                        got_show_for_band = True
+                if got_show_for_band == True:
+                    bandsuccesses.append(bandname.cleanname)
+            if not got_show_for_band:
+                bandfails.append(bandname.cleanname)
+            print ('Bandsuccesses: {0}      Bandfails: {1}'.format(len(bandsuccesses), len(bandfails)))
+            count += 1
+            bar.update(count)
 
     print ('Bandsuccesses: {0}      Bandfails: {1}'.format(len(bandsuccesses), len(bandfails)))
 

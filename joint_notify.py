@@ -67,7 +67,7 @@ def prepmsg(Session, target, quote, ttotm):
     full_message = full_message + "Shows happening in the next {2} days within {0} miles of {1}:".format(target.radius,
                                                                                                target.city, tdelta)
     full_message = full_message + "\n" + "(Checked {0} bands--here is a Spotify playlist " \
-                                         "with tracks from the bands on this list: {1})".format(listofbands.count(), link) + '\n'
+                                         "with tracks from the bands below: {1})".format(listofbands.count(), link) + '\n'
     full_message = full_message + show_list
 
     print('\n\n\n\n')
