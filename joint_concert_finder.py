@@ -18,16 +18,24 @@ def grab_bands_in_town(bandname, places, count):
     tday = dt.date.today()
     b = tday + dt.timedelta(tdelta)
     foo_count = count // 200
-    foo = 'foo' + foo_count * 'o'
+    foo = 'yoo' + foo_count * 'o'
     i = bandname
     cleanname = cleanish(i.name)
-    cleanname = urllib.parse.quote_plus(cleanname)
     urlclose = '/events?app_id=' + foo
-    url = baseURL + cleanname + urlclose
+    cleanname_url = urllib.parse.quote_plus(cleanname)
+    url = baseURL + cleanname_url + urlclose
+
+    data = False
+    venueLL = 0
 
     try:
         resp = requests.get(url)
         data = resp.json()
+        if not data:
+            cleanname_url = urllib.parse.quote(cleanname)
+            url = baseURL + cleanname_url + urlclose
+            resp = requests.get(url)
+            data = resp.json()
     except Exception as e:
         print ('Error occurred while requesting band ID {0}:'.format(i.id))
         print (resp, '     ', str(e))
@@ -75,6 +83,7 @@ def grab_bands_in_town(bandname, places, count):
                                     city=city.strip(), source='Bandsintown', cleanname=i.cleanname,
                                     queryby=home.sig)
                             shows.append(a)
+
                 except Exception as e:
                     print(str(e))
                     try:
@@ -134,7 +143,7 @@ def grabTFLY(bands, home):
                     a = gig(name = j['headlinersName'].strip(), date = date, venue = venue.strip(),
                             city = city.strip(), source = 'Ticketfly', cleanname = z,
                             queryby=home.sig)
-                    print(('Adding {0} - {1}'.format(z, a.city)))
+                    print('Adding {0} - {1}'.format(z, a.city))
                     shows.append(a)
                     if z not in bandsuccesses:
                         bandsuccesses.append(z)

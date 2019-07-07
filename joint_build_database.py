@@ -81,4 +81,5 @@ class gig(db):
     dateadded = Column(String(64), index=True)
 
     def __repr__(self):
-        return self.city, self.venue, self.headliner, self.date, self.month
+        x = str(self.city + ' ' + self.venue + ' ' +  self.date + ' ' +  self.source + ' ' +  self.queryby)
+        return x

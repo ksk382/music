@@ -17,7 +17,7 @@ def notify(Session, ttotm, live_mode):
     if live_mode == True:
         for target in targets:
             print(target.email)
-            message = prepmsg(Session, target, quote)
+            message = prepmsg(Session, target, quote, ttotm)
             send_email(Session, target, message, ttotm, True)
     else:
         for target in targets:

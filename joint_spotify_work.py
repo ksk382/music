@@ -154,7 +154,6 @@ def do_a_playlist(track_ids, new_playlist_name):
         print ('Created playlist {0}: {1}'.format(new_playlist_name, playlist_id))
         playlist_id = check_if_playlist_exists(sp, new_playlist_name, username)
     # delete contents of existing playlist
-    #
     delete_list = []
     results = sp.user_playlist(username, playlist_id,
                                fields="tracks,next")

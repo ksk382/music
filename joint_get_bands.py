@@ -13,12 +13,12 @@ from pytz import timezone
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
-    print(('{0} total TTOTM tracks'.format(len(TTOTMbands))))
+    print ('{0} total TTOTM tracks'.format(len(TTOTMbands)))
     return TTOTMbands
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
-    print(('{0} total TTOTM tracks'.format(len(TTOTMbands))))
+    print ('{0} total TTOTM tracks'.format(len(TTOTMbands)))
     return TTOTMbands
 
 def Pitchfork_charts(maxbands):

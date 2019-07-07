@@ -63,6 +63,7 @@ def grabbands(src):
             print (str(e))
             pass
     if src == 'Stereogum':
+        maxbands = 50
         try:
             list = sgum(maxbands)
         except Exception as e:
