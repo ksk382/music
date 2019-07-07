@@ -5,7 +5,7 @@ import socket
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker, scoped_session
-from joint_build_database import db, locales
+from joint_build_database import db, band
 from joint_people_and_places import identify_people, identify_places
 from joint_notify import notify
 import sys
@@ -25,6 +25,13 @@ session = Session()
 ttotm = 'TTOTM'
 json_name = '../showtime_creds/ajsonmlist.json'
 
+def esterio(Session):
+    session = Session()
+    a = session.query(band).filter(band.cleanname == 'bombaestereo')
+    for i in a:
+        i.comment = 'Aw hell yeah this is gonna be such a tight show'
+    return
+
 if __name__ == "__main__":
 
     try:
@@ -43,4 +50,5 @@ if __name__ == "__main__":
     getthebands(Session)
     gettheshows(Session)
     find_spotify_ids(Session)
+    estereo(Session)
     notify(Session, ttotm, live_mode=live_mode)

@@ -134,6 +134,8 @@ def add_songs_to_playlist(sp, username, playlist_id, track_ids):
     print ('Pushing {0} total tracks'.format(len(ids_to_add)))
     runs = len(ids_to_add) // 99 + 1
     ids_to_add = [x for x in ids_to_add if x is not None]
+    # length of a proper spotify ID is 22
+    ids_to_add = [x for x in ids_to_add if len(x) == 22]
 
     if len(ids_to_add) > 0:
         for i in range(0, runs):
@@ -142,7 +144,6 @@ def add_songs_to_playlist(sp, username, playlist_id, track_ids):
             print ('Pushing tracks: {0} through {1}'.format(x, y))
             track_ids_slice = ids_to_add[x:y]
             print (track_ids_slice)
-            print (type(track_ids_slice))
             results = sp.user_playlist_add_tracks(username, playlist_id, track_ids_slice)
 
 def do_a_playlist(track_ids, new_playlist_name):
@@ -176,8 +177,6 @@ def do_a_playlist(track_ids, new_playlist_name):
 def delete_all_playlists(key_word):
     sp, username = splog_on()
     current_playlists = sp.user_playlists(username)
-    current_playlist_names = []
-    playlist_id = None
     for playlist in current_playlists['items']:
         x, y = playlist['name'], playlist['id']
         print (x,y)
