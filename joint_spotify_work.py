@@ -77,7 +77,6 @@ def find_spotify_ids(Session):
             count +=1
             bar.update(count)
     print ('Track successes:  {0}     Track fails:      {1}'.format(len(tracksuccesses), len(trackfails)))
-    input('enter')
     return
 
 def get_playlist_link(new_playlist_name):
