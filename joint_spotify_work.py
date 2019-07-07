@@ -48,7 +48,7 @@ def find_spotify_ids(Session):
         for i in a:
             artist = i.name
             song = i.song
-            if band.spotify_id == 'failed 1':
+            if i.spotify_id == 'failed 1':
                 fail_count = 1
             else:
                 fail_count = 0
@@ -71,7 +71,8 @@ def find_spotify_ids(Session):
             else:
                 print ('Spotify failed: {} - {}'.format(artist, song))
                 trackfails.append([artist, song])
-                i.spotify_id = 'failed {}'.format(fail_count + 1)
+                new_id = 'failed {}'.format(fail_count + 1)
+                i.spotify_id = new_id
             session.commit()
             count +=1
             bar.update(count)
