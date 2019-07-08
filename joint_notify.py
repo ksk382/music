@@ -33,10 +33,12 @@ def prepmsg(Session, target, quote, ttotm):
     show_list = ''
 
     for show in allshows:
+        print (show.cleanname)
         theband = session.query(band).filter(band.cleanname == show.cleanname).first()
         cleandate = show.date[5:7].lstrip('0') + '/' + show.date[8::]
         combo_show = False
         source = theband.appeared
+
         for i in message_lines:
             if i[0] == cleandate and cleanish(i[2]) == cleanish(show.venue):
                 combo_show = True
