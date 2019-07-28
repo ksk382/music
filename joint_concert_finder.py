@@ -38,7 +38,7 @@ def grab_bands_in_town(bandname, places, count):
             data = resp.json()
     except Exception as e:
         print ('Error occurred while requesting band ID {0}:'.format(i.id))
-        print (resp, '     ', str(e))
+        print (str(e))
         data = []
         try:
             print(('Url was: {0}'.format(url)))
