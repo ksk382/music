@@ -237,7 +237,7 @@ def add_songs_to_playlist(sp, username, playlist_id, track_ids):
     while len(ids_to_add) > 0:
         track_ids_slice = ids_to_add[:99]
         m_num = min(99, len(ids_to_add))
-        print (f'Pushing tracks {len(done_list)} - {(len(done_list) + m_num)}')
+        print ('Pushing tracks {} - {}'.format(len(done_list),(len(done_list) + m_num)))
         results = sp.user_playlist_add_tracks(username, playlist_id, track_ids_slice)
         for i in track_ids_slice:
             done_list.append(i)
