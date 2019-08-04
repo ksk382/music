@@ -198,7 +198,7 @@ def check_if_playlist_exists(sp, new_playlist_name,username):
     current_playlist_names = []
     playlist_id = None
     for playlist in current_playlists['items']:
-        print (playlist['name'], playlist['id'])
+        #print (playlist['name'], playlist['id'])
         current_playlist_names.append(playlist['name'])
         if new_playlist_name == playlist['name']:
             playlist_id = playlist['id']
@@ -228,21 +228,20 @@ def add_songs_to_playlist(sp, username, playlist_id, track_ids):
 
     print (len(track_ids), len(existing_ids))
     ids_to_add = [x for x in track_ids if x not in existing_ids]
-
+    ids_to_add = [x for x in ids_to_add if x is not None]
+    ids_to_add = [x for x in ids_to_add if len(x) == 22]
     print ('Total tracks checked: {0}'.format(len(track_ids)))
     print ('Pushing {0} total tracks'.format(len(ids_to_add)))
-    runs = len(ids_to_add) // 99 + 1
-    ids_to_add = [x for x in ids_to_add if x is not None]
-    # length of a proper spotify ID is 22
-    ids_to_add = [x for x in ids_to_add if len(x) == 22]
 
-    if len(ids_to_add) > 0:
-        for i in range(0, runs):
-            x = (i * 99)
-            y = min(((i + 1) * 99), len(ids_to_add))
-            print ('Pushing tracks: {0} through {1}'.format(x, y))
-            track_ids_slice = ids_to_add[x:y]
-            results = sp.user_playlist_add_tracks(username, playlist_id, track_ids_slice)
+    done_list = []
+    while len(ids_to_add) > 0:
+        track_ids_slice = ids_to_add[:99]
+        m_num = min(99, len(ids_to_add))
+        print (f'Pushing tracks {len(done_list)} - {(len(done_list) + m_num)}')
+        results = sp.user_playlist_add_tracks(username, playlist_id, track_ids_slice)
+        for i in track_ids_slice:
+            done_list.append(i)
+        ids_to_add = [g for g in track_ids_slice if g not in done_list]
 
 def do_a_playlist(track_ids, new_playlist_name):
     sp, username = splog_on()
@@ -256,7 +255,7 @@ def do_a_playlist(track_ids, new_playlist_name):
     results = sp.user_playlist(username, playlist_id,
                                fields="tracks,next")
     tracks = results['tracks']
-    print (tracks)
+
     for i in tracks['items']:
         delete_list.append(i['track']['id'])
     while tracks['next']:
