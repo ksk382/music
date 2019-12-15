@@ -10,6 +10,7 @@ import re
 from random import shuffle
 import datetime as dt
 from pytz import timezone
+import time
 
 def get_TTOTM_bands():
     TTOTMbands = sheetpull()
@@ -164,6 +165,7 @@ def metacritic(maxbands):
     chromeOptions.add_experimental_option("prefs", prefs)
     driver = webdriver.Chrome(chrome_options=chromeOptions)
     driver.get(url)
+    time.sleep(2)
 
     innerHTML = driver.execute_script("return document.body.innerHTML")
     bs = BeautifulSoup(innerHTML, 'html.parser')
