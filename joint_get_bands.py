@@ -301,7 +301,9 @@ def KCRW_harvest(maxbands):
     print ('Grabbing KCRW bands')
     while (i<30) and len(allbands)<maxbands:
         url = 'https://tracklist-api.kcrw.com/Simulcast/all/' + str(i)
-        response = urllib.request.urlopen(url).read()
+        hdr = {'User-Agent': 'Mozilla/5.0'}
+        req = urllib.request.Request(url, headers=hdr)
+        response = urllib.request.urlopen(req).read()
         data = json.loads(response.decode('utf-8'))
         print(("KCRW page {0} \n".format(i)))
         for entry in data:
@@ -381,7 +383,9 @@ def KEXP_harvest(show, showname, max_length):
             print (url)
             print ('\n')
             try:
-                response = urllib.request.urlopen(url)
+                hdr = {'User-Agent': 'Mozilla/5.0'}
+                req = urllib.request.Request(url, headers=hdr)
+                response = urllib.request.urlopen(req)
                 data = json.loads(response.read().decode('utf-8'))
                 dump = data['results']
                 print('Success.\n')
