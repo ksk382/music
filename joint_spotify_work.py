@@ -97,7 +97,10 @@ def find_spotify_ids(Session):
                        '{}'.format(i.source, artist, song, i.spotify_release_year))
                 tracksuccesses.append([i.source, artist, song])
             else:
-                trackfails.append([i.source, query2])
+                try:
+                    trackfails.append([i.source, query2])
+                except:
+                    trackfails.append([i.source, query1])
                 new_id = 'failed {}'.format(fail_count + 1)
                 i.spotify_id = new_id
             session.commit()
