@@ -1,5 +1,5 @@
 # music
-A program for findings concerts based on bands favored by the music sharing group, TTOTM
+A program for findings concerts based on bands favored by the music sharing group, TTOTM. This currently runs once a week from a raspberry pi sitting in my closet.
 
 *** updated 5/13/2018, converted to Python 3
 
