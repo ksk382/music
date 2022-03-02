@@ -22,7 +22,12 @@ def getthebands(Session):
     today = dt.date.today()
     for src in bandsources:
         print(src)
-        list = grabbands(src)
+        try:
+            list = grabbands(src)
+        except Exception as e:
+            print (str(e))
+            continue
+
         for i in list:
             h = cleanup(i.name)
             if h != '':
