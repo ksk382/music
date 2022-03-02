@@ -3,7 +3,7 @@ from joint_build_database import gig, locales
 from joint_music_utilities import cleanup, cleanish
 import requests
 import json
-from geopy.distance import vincenty
+from geopy.distance import geodesic
 import datetime as dt
 import progressbar
 import urllib
@@ -71,7 +71,7 @@ def grab_bands_in_town(bandname, places, count):
             for home in places:
                 try:
                     placeLL = '(' + str(home.lat) + ',' + str(home.long) + ')'
-                    dist = vincenty(placeLL, venueLL).miles
+                    dist = geodesic(placeLL, venueLL).miles
                     if dist <= 20:
                         showdate = str(show['datetime'])[:10] + ' ' + str(show['datetime'])[11:19]
                         date = showdate[:10]

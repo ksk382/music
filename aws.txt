@@ -1,1 +1,3 @@
+git pull showtime master
+
 scp -r -i code/kskkeypair1.pem code/projects/music/showtime_creds ubuntu@35.169.152.209:showtime/
