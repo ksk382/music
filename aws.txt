@@ -1,0 +1,1 @@
+scp -r -i code/kskkeypair1.pem ubuntu@35.169.152.209:showtime/stock_dataframes/*.csv code/projects/trading/stock_dataframes/
